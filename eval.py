@@ -37,7 +37,7 @@ def main():
 
     print(f"\nMean Accuracy: {np.mean(accuracies):.4f} (+/- {np.std(accuracies):.4f})")
     print(f"Total Time:    {total_time:.2f}s")
-    print(f"Status:        {'PASS' if total_time < 600 else 'FAIL (timeout)'}")
+    print(f"Status:        {'PASS' if total_time < 60 else 'FAIL (timeout)'}")
 
 
 if __name__ == "__main__":

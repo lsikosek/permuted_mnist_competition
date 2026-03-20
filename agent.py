@@ -21,7 +21,9 @@ class Agent:
         if seed is not None:
             torch.manual_seed(seed)
         self.device = torch.device("cpu")
+        self._init_model()
 
+    def _init_model(self):
         self.model = nn.Linear(self.input_dim, self.output_dim).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
@@ -34,7 +36,7 @@ class Agent:
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray):
         """Train the linear model on the provided data."""
-        X = torch.from_numpy(X_train / 255.).to(self.device)
+        X = torch.from_numpy(X_train.reshape(len(X_train), -1) / 255.).float().to(self.device)
         y = torch.from_numpy(y_train.ravel().astype(np.int64)).to(self.device)
 
         n_samples = X.shape[0]
@@ -57,7 +59,7 @@ class Agent:
     @torch.no_grad()
     def predict(self, X_test: np.ndarray) -> np.ndarray:
         """Predict class labels for test data."""
-        X = self._preprocess(X_test)
+        X = torch.from_numpy(X_test.reshape(len(X_test), -1) / 255.).float().to(self.device)
         self.model.eval()
         logits = self.model(X)
         return logits.argmax(dim=1).cpu().numpy()
