@@ -21,18 +21,10 @@ class Agent:
         if seed is not None:
             torch.manual_seed(seed)
         self.device = torch.device("cpu")
-        self._init_model()
-
-    def _init_model(self):
         self.model = nn.Linear(self.input_dim, self.output_dim).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
 
-    def reset(self):
-        """Reset model weights for a new task."""
-        if self.seed is not None:
-            torch.manual_seed(self.seed)
-        self._init_model()
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray):
         """Train the linear model on the provided data."""
