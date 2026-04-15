@@ -30,6 +30,7 @@ class NeuralNetwork(nn.Module):
         layer1features= 512
         layer2features = 256
         layer3features = 128
+        layer4features = 64
 
         self.classifier = nn.Sequential(
             # nn.Flatten(),
@@ -39,7 +40,9 @@ class NeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.Linear(in_features=layer2features, out_features=layer3features),
             nn.ReLU(),
-            nn.Linear(layer3features, output_dim)
+            nn.Linear(layer3features, layer4features),
+            nn.ReLU(),
+            nn.Linear(layer4features, output_dim)
         )
 
     def forward(self, x):
@@ -52,7 +55,7 @@ class Agent:
     """Linear softmax classifier using PyTorch SGD."""
 
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.07, epochs: int = 35, batch_size: int = 128):        
+                 learning_rate: float = 0.15, epochs: int = 35, batch_size: int = 128):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
@@ -65,6 +68,7 @@ class Agent:
         self.model = NeuralNetwork().to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
+        # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
     
 
