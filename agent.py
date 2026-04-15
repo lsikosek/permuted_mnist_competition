@@ -55,7 +55,7 @@ class Agent:
     """Linear softmax classifier using PyTorch SGD."""
 
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.15, epochs: int = 35, batch_size: int = 128):        
+                 learning_rate: float = 0.15, epochs: int = 20, batch_size: int = 128):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
