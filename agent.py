@@ -32,7 +32,7 @@ class NeuralNetwork(nn.Module):
         layer3features = 128
 
         self.classifier = nn.Sequential(
-            nn.Flatten(),
+            # nn.Flatten(),
             nn.Linear(in_features=input_dim, out_features=layer1features),
             nn.ReLU(),
             nn.Linear(in_features=layer1features, out_features=layer2features),
@@ -52,7 +52,7 @@ class Agent:
     """Linear softmax classifier using PyTorch SGD."""
 
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.05, epochs: int = 45, batch_size: int = 128):        
+                 learning_rate: float = 0.07, epochs: int = 35, batch_size: int = 128):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
