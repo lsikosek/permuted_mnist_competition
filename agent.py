@@ -10,7 +10,7 @@ import torch.nn as nn
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, input_dim: int = 784, output_dim: int = 10, hidden_layer_sizes: list[int] = [512,400,300,150]) -> None:
+    def __init__(self, input_dim: int = 784, output_dim: int = 10, hidden_layer_sizes: list[int] = None) -> None:
         super(NeuralNetwork, self).__init__()
 
         #self.flatten = nn.Flatten()
@@ -66,17 +66,18 @@ class NeuralNetwork(nn.Module):
 
 class Agent:
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.15, epochs: int = 20, batch_size: int = 128, hidden_layer_sizes: list[int] = None):        
+                 learning_rate: float = 0.15, epochs: int = 30, batch_size: int = 64, hidden_layer_sizes: list[int] = [128, 128, 64]):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
         self.seed = seed
+        self.hidden_layer_sizes = hidden_layer_sizes
         if seed is not None:
             torch.manual_seed(seed)
         self.device = torch.device("cpu")
-        self.model = NeuralNetwork(input_dim=self.input_dim, output_dim=self.output_dim, ).to(self.device)
+        self.model = NeuralNetwork(input_dim=self.input_dim, output_dim=self.output_dim, hidden_layer_sizes = self.hidden_layer_sizes).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)

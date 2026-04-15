@@ -261,10 +261,10 @@ def main() -> None:
 
     all_configs = list(
         itertools.product(
+            hidden_layer_grid,
             learning_rates,
             epochs_list,
             batch_sizes,
-            hidden_layer_grid,
         )
     )
 
@@ -274,61 +274,56 @@ def main() -> None:
     results = []
     best_result = None
 
-    for idx, (learning_rate, epochs, batch_size, hidden_layer_sizes) in enumerate(all_configs, start=1):
-        print(
-            f"[{idx}/{len(all_configs)}] "
-            f"lr={learning_rate}, epochs={epochs}, batch={batch_size}, "
-            f"hidden={hidden_layer_sizes}"
-        )
-
-        try:
-            result = evaluate_config(
-                learning_rate=learning_rate,
-                epochs=epochs,
-                batch_size=batch_size,
-                hidden_layer_sizes=hidden_layer_sizes,
-                num_episodes=args.num_episodes,
-                seed=args.seed,
-                episode_timeout=args.episode_timeout,
-            )
-            results.append(result)
-
+    try:
+        for idx, (hidden_layer_sizes, learning_rate, epochs, batch_size) in enumerate(all_configs, start=1):
             print(
-                f"  -> mean_acc={result['mean_accuracy']:.4f}, "
-                f"std_acc={result['std_accuracy']:.4f}, "
-                f"mean_time={result['mean_time']:.2f}s"
+                f"[{idx}/{len(all_configs)}] "
+                f"lr={learning_rate}, epochs={epochs}, batch={batch_size}, "
+                f"hidden={hidden_layer_sizes}"
             )
 
-            if best_result is None or result["mean_accuracy"] > best_result["mean_accuracy"]:
-                best_result = result
+            try:
+                result = evaluate_config(
+                    learning_rate=learning_rate,
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    hidden_layer_sizes=hidden_layer_sizes,
+                    num_episodes=args.num_episodes,
+                    seed=args.seed,
+                    episode_timeout=args.episode_timeout,
+                )
+                results.append(result)
 
-        except TimeoutError as e:
-            print(f"  -> skipped (timeout): {e}")
-        except Exception as e:
-            print(f"  -> skipped (error): {e}")
+                results.sort(key=lambda x: x["mean_accuracy"], reverse=True)
+                save_results_csv(results, args.results_path)
 
-        print("-" * 100)
+                print(
+                    f"  -> mean_acc={result['mean_accuracy']:.4f}, "
+                    f"std_acc={result['std_accuracy']:.4f}, "
+                    f"mean_time={result['mean_time']:.2f}s"
+                )
 
-    results.sort(key=lambda x: x["mean_accuracy"], reverse=True)
-    save_results_csv(results, args.results_path)
+                if best_result is None or result["mean_accuracy"] > best_result["mean_accuracy"]:
+                    best_result = result
+
+            except TimeoutError as e:
+                print(f"  -> skipped (timeout): {e}")
+            except Exception as e:
+                print(f"  -> skipped (error): {e}")
+
+            print("-" * 100)
+
+    except KeyboardInterrupt:
+        print("\nInterrupted by user. Saving partial results...")
+        results.sort(key=lambda x: x["mean_accuracy"], reverse=True)
+        save_results_csv(results, args.results_path)
 
     if not results:
         print("No successful runs.")
         return
 
-    print("\nTop 10 configurations:")
-    for i, r in enumerate(results[:10], start=1):
-        print(
-            f"{i:2d}. lr={r['learning_rate']}, "
-            f"epochs={r['epochs']}, "
-            f"batch={r['batch_size']}, "
-            f"hidden={r['hidden_layer_sizes']}, "
-            f"mean_acc={r['mean_accuracy']:.4f}, "
-            f"std_acc={r['std_accuracy']:.4f}, "
-            f"mean_time={r['mean_time']:.2f}s"
-        )
-
-    print("\nBest configuration:")
+    print("\nBest configuration so far:")
+    best_result = max(results, key=lambda x: x["mean_accuracy"])
     print(
         f"  learning_rate     = {best_result['learning_rate']}\n"
         f"  epochs            = {best_result['epochs']}\n"
@@ -339,7 +334,6 @@ def main() -> None:
         f"  mean_time         = {best_result['mean_time']:.2f}s\n"
         f"  results_csv       = {args.results_path}"
     )
-
 
 if __name__ == "__main__":
     main()
