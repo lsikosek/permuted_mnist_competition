@@ -10,7 +10,7 @@ import torch.nn as nn
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, input_dim: int = 784, output_dim: int = 10) -> None:
+    def __init__(self, input_dim: int = 784, output_dim: int = 10, hidden_layer_sizes: list[int] = [512,400,300,150]) -> None:
         super(NeuralNetwork, self).__init__()
 
         #self.flatten = nn.Flatten()
@@ -27,23 +27,36 @@ class NeuralNetwork(nn.Module):
             
         )
 
-        layer1features= 512
-        layer2features = 256
-        layer3features = 128
-        layer4features = 64
+        # layer1features= 1024
+        # layer2features = 512
+        # layer3features = 256
+        # layer4features = 128
+        
 
         self.classifier = nn.Sequential(
             # nn.Flatten(),
-            nn.Linear(in_features=input_dim, out_features=layer1features),
-            nn.ReLU(),
-            nn.Linear(in_features=layer1features, out_features=layer2features),
-            nn.ReLU(),
-            nn.Linear(in_features=layer2features, out_features=layer3features),
-            nn.ReLU(),
-            nn.Linear(layer3features, layer4features),
-            nn.ReLU(),
-            nn.Linear(layer4features, output_dim)
+            # nn.Linear(in_features=input_dim, out_features=layer1features),
+            # nn.ReLU(),
+            # nn.Linear(in_features=layer1features, out_features=layer2features),
+            # nn.ReLU(),
+            # nn.Linear(in_features=layer2features, out_features=layer3features),
+            # nn.ReLU(),
+            # nn.Linear(layer3features, layer4features),
+            # nn.ReLU(),
+            # nn.Linear(layer4features, output_dim)
         )
+
+        for (i, s) in enumerate(hidden_layer_sizes):
+            module_name = f"dense{i}"
+            act_name = f"act{i}"
+            in_features = input_dim
+            if i>0:
+                in_features=hidden_layer_sizes[i-1]
+            self.classifier.add_module(module_name, nn.Linear(in_features, s))
+            self.classifier.add_module(act_name, nn.ReLU())
+
+        self.classifier.add_module("classification",nn.Linear(hidden_layer_sizes[-1], output_dim))
+
 
     def forward(self, x):
         #x = self.flatten(x)
@@ -52,10 +65,8 @@ class NeuralNetwork(nn.Module):
         return logits
 
 class Agent:
-    """Linear softmax classifier using PyTorch SGD."""
-
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.15, epochs: int = 20, batch_size: int = 128):        
+                 learning_rate: float = 0.15, epochs: int = 20, batch_size: int = 128, hidden_layer_sizes: list[int] = None):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
@@ -65,7 +76,7 @@ class Agent:
         if seed is not None:
             torch.manual_seed(seed)
         self.device = torch.device("cpu")
-        self.model = NeuralNetwork().to(self.device)
+        self.model = NeuralNetwork(input_dim=self.input_dim, output_dim=self.output_dim, ).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)

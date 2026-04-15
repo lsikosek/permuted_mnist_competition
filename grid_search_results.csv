@@ -1,0 +1,2 @@
+learning_rate,epochs,batch_size,hidden_layer_sizes,mean_accuracy,std_accuracy,mean_time,std_time,total_time,episodes_run
+0.05,10,64,"128,128,64",0.9763300000000001,0.003269571837412359,22.435939240455628,2.3128856721183575,224.35939240455627,10
