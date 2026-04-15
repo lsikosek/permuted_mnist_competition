@@ -66,7 +66,7 @@ class NeuralNetwork(nn.Module):
 
 class Agent:
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.15, epochs: int = 30, batch_size: int = 64, hidden_layer_sizes: list[int] = [128, 128, 64]):        
+                 learning_rate: float = 0.1, epochs: int = 20, batch_size: int = 256, hidden_layer_sizes: list[int] = [800,800]):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate
@@ -79,8 +79,8 @@ class Agent:
         self.device = torch.device("cpu")
         self.model = NeuralNetwork(input_dim=self.input_dim, output_dim=self.output_dim, hidden_layer_sizes = self.hidden_layer_sizes).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
-        # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=1e-4, nesterov=True)
+        # self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate, weight_decay=1e-4)
 
     
 
