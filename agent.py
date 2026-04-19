@@ -2,7 +2,7 @@
 Softmax Linear Classification Agent for Permuted MNIST
 Uses PyTorch for a single linear layer with softmax (logistic regression).
 """
-from typing import Any
+#from typing import Any
 
 import numpy as np
 import torch
@@ -66,7 +66,7 @@ class NeuralNetwork(nn.Module):
 
 class Agent:
     def __init__(self, input_dim: int = 784, output_dim: int = 10, seed: int = None,
-                 learning_rate: float = 0.1, epochs: int = 20, batch_size: int = 256, hidden_layer_sizes: list[int] = [800,800]):        
+                 learning_rate: float = 0.1, epochs: int = 10, batch_size: int = 2048, hidden_layer_sizes: list[int] = [2048,2048]):        
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.learning_rate = learning_rate

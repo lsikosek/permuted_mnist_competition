@@ -4,7 +4,7 @@ Evaluate the softmax linear agent on the Permuted MNIST environment.
 import time
 import numpy as np
 from permuted_mnist.env.permuted_mnist import PermutedMNISTEnv
-from agent import Agent
+from agent2 import Agent
 
 
 def main():
