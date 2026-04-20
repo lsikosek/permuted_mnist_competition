@@ -64,13 +64,13 @@ class Agent:
         return np.asarray(y).ravel().astype(np.int64)
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        #X = self._prepare_inputs(X_train)
-        #y = self._prepare_targets(y_train)
+        X = self._prepare_inputs(X_train)
+        y = self._prepare_targets(y_train)
 
         #X = self.scaler.fit_transform(X)
 
-        X = X_train
-        y = y_train
+        # X = X_train
+        # y = y_train
 
         # start_time = time.time()
         # first = True
@@ -94,7 +94,7 @@ class Agent:
         if not self._is_fitted:
             raise RuntimeError("Agent must be trained before calling predict().")
 
-        # X = self._prepare_inputs(X_test)
-        X=X_test
+        X = self._prepare_inputs(X_test)
+        #X=X_test
         #X = self.scaler.transform(X)
         return self.model.predict(X)
