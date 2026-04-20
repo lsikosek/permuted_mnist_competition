@@ -12,9 +12,10 @@ class Agent:
         output_dim: int = 10,
         seed: int | None = None,
         learning_rate: float = 0.15,
-        epochs: int = 50,
-        batch_size: int = 256,
-        hidden_layer_sizes: list[int] = [512],
+        epochs: int = 1500,
+        batch_size: int = 1024,
+        hidden_layer_sizes: list[int] = [1024, 512],
+        #[768],
         alpha: float = 1e-4,
         time_limit_seconds: float | None = 55.0,
     ) -> None:
@@ -44,7 +45,8 @@ class Agent:
             momentum=0.9,
             nesterovs_momentum=True,
             shuffle=True,
-            max_iter=1,          # one internal pass per partial_fit call
+            #max_iter=1,          # one internal pass per partial_fit call
+            max_iter = self.epochs,
             warm_start=False,
             early_stopping=False,
             random_state=self.seed,

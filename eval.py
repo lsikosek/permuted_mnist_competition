@@ -29,14 +29,16 @@ def main():
         predictions = agent.predict(task["X_test"])
         elapsed = time.time() - start
 
-        if elapsed > 60:
-            raise TimeoutError(f"One episode is timed out with {elapsed:0.02f}s")
+        
 
         total_time += elapsed
         accuracy = env.evaluate(predictions, task["y_test"])
         accuracies.append(accuracy)
 
         print(f"Episode {episode + 1:2d}: Accuracy: {accuracy:.4f}, Time: {elapsed:.2f}s")
+
+        if elapsed > 60:
+            raise TimeoutError(f"One episode is timed out with {elapsed:0.02f}s")
 
     print(f"\nMean Accuracy: {np.mean(accuracies):.4f} (+/- {np.std(accuracies):.4f})")
     print(f"Averaged Time:    {np.mean(total_time):.2f}s (+/- {np.std(total_time):.2f})")
