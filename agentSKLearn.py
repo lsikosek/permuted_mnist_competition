@@ -14,7 +14,7 @@ class Agent:
         learning_rate: float = 0.15,
         epochs: int = 1500,
         batch_size: int = 1024,
-        hidden_layer_sizes: list[int] = [1024, 512],
+        hidden_layer_sizes: list[int] = [1024, 256],
         #[768],
         alpha: float = 1e-4,
         time_limit_seconds: float | None = 55.0,
